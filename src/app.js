@@ -2,12 +2,12 @@ const express = require('express');
 
 const app = express();
 
-const {adminAuth, userAuth} = require("/middleware/auth");
+const {adminAuth, userAuth} = require("./middleware/auth");
 
 // this will only handle GET call to/user 
 
     app.use("/admin", adminAuth);
-    app.use("/user", isUserAuthorized);
+    app.use("/user", userAuth);
 
     app.get("/admin/getAllData", (req, res) =>{
         res.send("All data sent");
