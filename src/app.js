@@ -2,35 +2,28 @@ const express = require('express');
 
 const app = express();
 
+const {adminAuth, userAuth} = require("/middleware/auth");
 
 // this will only handle GET call to/user 
-app.get(
-    "/user",
-    (req,  res, next) =>{
-        console.log("Handling the router user");
-        // res.send("Response!");
-        next();
-},
-(req, res, next) =>{
-    console.log("Handling the router user 2");
-    // res.send("2nd Response!");
-    next();
-},
-(req, res, next) =>{
-    console.log("Handling the router user 3");
-    // res.send("3rd Response!");
-    next();
-},
-(req, res, next) =>{
-    console.log("Handling the router user 4");
-    // res.send("4th response!");
-    next();
-},
-(req, res, next) =>{
-    console.log("Handling the router user 5");
-    res.send("5th response!");
-});
 
+    app.use("/admin", adminAuth);
+    app.use("/user", isUserAuthorized);
+
+    app.get("/admin/getAllData", (req, res) =>{
+        res.send("All data sent");
+    });
+
+    app.get("/admin/deleteUser", (req, res) =>{
+        res.send("Deleted data");
+    });
+
+    app.get("/user/getAllData", (req,res) =>{
+        res.send("sent all User data");
+    });
+    app.get("/user/deleteProfile", (req, res) =>{
+        res.send("deleted user data");
+    })
+        
 
 
 app.listen(7000,() =>{
