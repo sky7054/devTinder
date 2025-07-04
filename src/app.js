@@ -8,7 +8,12 @@ const {adminAuth, userAuth} = require("./middleware/auth");
 
     app.use("/admin", adminAuth);
     app.use("/user", userAuth);
-
+     app.use("/",(err, req, res, next) =>{
+        if(err){
+            res.status(402).send("Something went wrong");
+        }
+    })
+    
     app.get("/admin/getAllData", (req, res) =>{
         res.send("All data sent");
     });
@@ -22,8 +27,17 @@ const {adminAuth, userAuth} = require("./middleware/auth");
     });
     app.get("/user/deleteProfile", (req, res) =>{
         res.send("deleted user data");
+    });
+
+      app.get("/getUserData", (res, req)=>{
+        res.send("user sent all data");
+        })
+
+    app.use("/", (err, req, res, next) =>{
+        if(err){
+            res.status(501).send("Something went Wrong");
+        }
     })
-        
 
 
 app.listen(7000,() =>{
