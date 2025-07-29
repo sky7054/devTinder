@@ -10,7 +10,6 @@
 - what is the use of "-g" while installing npm
 - Difference between caret and tilda (~ vs ^)
 
-
 - initialize git
 - .gitignore
 - Create a remote repo on github
@@ -34,7 +33,16 @@
 - Write a dummy auth middleware for admin
 - Write a dummy auth middleware for all user, except /user/login
 - Error handling using app.use("/",(err, res, req, next) => {});
--
+
+- Create a free cluster on mongoDB official website (Mongo Atlas)
+- Install mongoose library
+- Connect your application on database "Connection-url"/devTinder
+- Call the connectDB function and connect to the database before starting application 7000
+- Create a userSchema and userModel
+- Create post/signup API to add data to database
+- Push some documents using API calls from postman
+- Error handing using try, catch
+
 
 
 
