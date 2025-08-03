@@ -48,8 +48,12 @@
 - Make your signup API dynamic to receive data from from the end user
 - API - Get user by email Id
 - API - Feed API - Get all user from database
-
-
+- Create a delete user API-
+- difference betweeen PUT and PATCH
+- API - Update a user
+- Explore the mongoose Documentation for model methods
+- what are option in a Model.findOneAndUpdate methods, explore more about it.
+- API - Update the user with email ID
 
 
 
