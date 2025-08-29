@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
+const { default: isURL } = require('validator/lib/isURL');
 
 const userSchema = new mongoose.Schema({
     firstName : {
@@ -13,11 +15,21 @@ const userSchema = new mongoose.Schema({
         require : true,
         lowercase : true,
         unique : true,
-        trim : true
+        trim : true,
+        validate(value){
+        if(!validator.isEmail(value)){
+            throw new Error ("invalid Email address " + value);
+        }
+        },
     },
     password : {
         type : String,
-        require : true
+        require : true,
+        validate(value){
+            if(!validator.isStrongPassword(value)){
+                throw new Error("Your password is not strong : " + value);
+            }
+        }
     },
     age : {
         type : Number
@@ -27,17 +39,24 @@ const userSchema = new mongoose.Schema({
         lowercase : true,
         validate(value){
             if(!["male", "female", "other" ].includes(value)){
-                throw new error("Gender is not valid");
+                throw new Error("Gender is not valid");
             }
         }
     },
-    PhotoURL : {
+    photoURL : {
         type : String,
-        default : "https://images.icon-icons.com/2643/PNG/512/female_woman_user_people_avatar_white_tone_icon_159354.png"
+        default : "https://images.icon-icons.com/2643/PNG/512/female_woman_user_people_avatar_white_tone_icon_159354.png",
+        validate(value){
+            if(!validator.isURL(value)){
+                throw new Error ("Your photoURL is invalid :" + value );
+            }
+        }
     },
     About : {
         type : String,
-        default : "this is default about of the user",
+        default : "creates a validator that checks if the value length is not less than the given number is default about of the user",
+        minLength: 100,
+        maxLength : 500 
     },
     skills :{
         type : [String]
