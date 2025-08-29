@@ -62,3 +62,8 @@
 - Add timestamp to the userSchema
 - Add API level validiation on PATCH request & signUP post API
 - Data sanitizing - Add API validation for each field
+
+- npm validator - is used for email validation (e.g. - check @, ., com , .in, etc)
+- Install Validator
+- Explore Validator library function and Use Validator funcs for emailId, password, photoURL
+- Never trust req.body data
