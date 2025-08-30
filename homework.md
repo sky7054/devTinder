@@ -67,3 +67,11 @@
 - Install Validator
 - Explore Validator library function and Use Validator funcs for emailId, password, photoURL
 - Never trust req.body data
+
+- bcrypt npm is gives you functions TO HASH youur password & encrypt your password
+
+- Validate data in SignUp API 
+- install bcrypt package
+- Create PasswordHash Using bcrypt.hash & save the user is encrupted password
+- Create Login API
+- Compare passwords and throw error if email or password is invalid

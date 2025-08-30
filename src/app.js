@@ -4,20 +4,72 @@ const app = express();
 
 const { connectDB } = require("./config/database");
 
+const {ValidateSignUpPage} = require("./utils/validation");
+
+const bcrypt = require('bcrypt');
+
+
 const User = require("./models/user");
 
 app.use(express.json());
 
 app.post("/signup", async (req, res) => {
-  const user = new User(req.body);
+try{
+// validation of user data
+
+ ValidateSignUpPage(req);
+
+
+ // Encrypt the password 
+ const{firstName, lastName, emailId, password, skills} = req.body;
+
+ const passwordHash = await bcrypt.hash(password, 10);
+
+ console.log(passwordHash);
+
+  const user = new User({
+    firstName,
+    lastName,
+    emailId,
+    password : passwordHash,
+    skills
+  });
 
   // Creating new instance of User model
   // get & post  function always return promise
 
   await user.save();
   res.send("User database successfully");
+}
+catch (err) {
+  res.status(404).send("Error:" + err.message);
+}
 });
 
+app.post("/login", async(req, res) =>{
+  try{
+     const {emailId, password} = req.body;
+
+  const user = await User.findOne({emailId : emailId});
+
+  if(!user){
+    throw new Error("Invalid Credential");
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+
+  if(isPasswordValid){
+    res.send("Login successful!!!");
+  }
+  else{
+    throw new Error("Invalid Credential");
+  }
+  } 
+catch (err){
+    res.status(400).send("Error : " + err.message );
+}
+
+});
 /// API - Get user by email Id
 app.get("/user", async (req, res) => {
   const userEmail = req.body.emailId;
@@ -30,8 +82,8 @@ app.get("/user", async (req, res) => {
     } else {
       res.send(user);
     }
-  } catch {
-    res.status.send("Something went wrong !!");
+  } catch(err) {
+    res.status(404).send("Something went wrong !!");
   }
 });
 
@@ -40,7 +92,7 @@ app.get("/Feed", async (req, res) => {
   const user = await User.find({});
   try {
     res.send(user);
-  } catch {
+  } catch(err) {
     res.status(404).send("Something went wrong");
   }
 });
