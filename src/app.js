@@ -12,8 +12,11 @@ const cookieParser = require('cookie-parser');
 
 const jwt = require('jsonwebtoken');
 
+const {userAuth} = require('./middleware/auth'); 
+
 
 const User = require("./models/user");
+const { send } = require("process");
 
 app.use(express.json()); // express.json() => is middleware parse JSON object into Javascript object 
 app.use(cookieParser()); // cookieParser is middleware parse to token and read it
@@ -62,14 +65,16 @@ app.post("/login", async(req, res) =>{
   }
 
   /// check password authentication
-  const isPasswordValid = await bcrypt.compare(password, user.password);
+  const isPasswordValid = await user.validatePassword(password);
 
   if(isPasswordValid){
 // create a JWT token
 
-    const token = await jwt.sign({ _id : user._id}, "dev@123akas$&");
+  const token = await user.getJWT();
 
-    res.cookie("token", token) /// send token back to user
+    res.cookie("token", token, {
+    expires: new Date(Date.now() + 101 * 3600000) // cookie will be removed after 8 hours
+  }); /// send token back to user
 
     
 
@@ -85,47 +90,30 @@ app.post("/login", async(req, res) =>{
 catch (err){
     res.status(400).send("Error : " + err.message );
 }
-
-// User Profile ---- API
-app.get("/profile", async(req, res) => {
- 
-  try{
-
-    const cookies = req.cookies;
-
-    const {token} = cookies;
-
-    if(!token){
-      throw new Error("Invalid token");
-    }
-
-    const decodeMassege = await jwt.verify(token, "dev@123akas$&");
-
-    const {_id} = decodeMassege;
-
-    const user = await User.findById(_id);
-
-    if(!user){
-      throw new Error ("user does not exits");
-    }
-    else{
-      res.send(user); 
-    }
-    
-  }
-  catch (err) {
-    res.status(404).send("Error :"+ err.message);
-  }
-
 })
 
+// User Profile ---- API
+app.get("/profile",userAuth, async(req, res) => {
+
+  try{
+    const user = req.user;
+
+    res.send(user);
+  }catch(err){
+    res.status(404).send("Error :"+ err.message)
+  }
+});
+
+app.get("/sendRequestConnection",userAuth, async(req,res) => {
+      const user = req.user;
+
+      res.send("Friend request sent by " + user.firstName);
 })
 /// API - Get user by email Id
 app.get("/user", async (req, res) => {
   const userEmail = req.body.emailId;
 
   try {
-    console.log(userEmail);
     const user = await User.findOne({ emailId: userEmail });
     if (!user) {
       res.status(404).send("user not found");
@@ -164,7 +152,6 @@ app.patch("/user/:userId", async (req, res) => {
   const data = req.body;
 
   try {
-    console.log(data);
 
     const ALLOWED_UPADATES = ["age", "gender", "photURL", "about", "skills"];
 
@@ -181,7 +168,6 @@ app.patch("/user/:userId", async (req, res) => {
       runValidators: true,
     });
 
-    console.log(user);
     res.send("user data updated successfully");
   } catch (err) {
     res.send("UPDATE FAILED:" + err.message);
@@ -197,5 +183,5 @@ connectDB()
     });
   })
   .catch((err) => {
-    console.log("database connection can't established");
+    console.log("database connection can not established");
   });
