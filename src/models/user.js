@@ -48,7 +48,6 @@ const userSchema = new mongoose.Schema({
     About : {
         type : String,
         default : "creates a validator that checks if the value length is not less than the given number is default about of the user",
-        minLength: 100,
         maxLength : 500 
     },
     skills :{
